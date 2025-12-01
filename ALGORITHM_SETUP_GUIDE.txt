@@ -1,0 +1,276 @@
+/* ====================================================
+   ALGORITHM INTEGRATION SETUP GUIDE
+   ==================================================== */
+
+IMPORTANT: Read this before using the algorithms!
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 1: DATABASE SETUP (Required!)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Open your browser and navigate to:
+   http://localhost/Project_iii/setup_algorithms_db.php
+
+2. This will create required tables and add columns:
+   - product: view_count, rating, inventory_level, reorder_point
+   - product_ratings: Store user ratings and reviews
+   - product_bundles: Store detected product bundles
+   - recommendation_log: Track recommendation performance
+   - abandoned_carts: Track incomplete purchases
+
+3. After successful setup, you can delete setup_algorithms_db.php
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 2: NEW FILES CREATED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ algorithms.inc.php
+  - Main algorithm module with all 10 functions
+  - Include this in any file using: require('algorithms.inc.php');
+
+✓ AdminTheme/analytics_dashboard.php
+  - Advanced admin dashboard with analytics
+  - Access at: /AdminTheme/analytics_dashboard.php
+  - Shows ABC Analysis, Demand Forecasting, Bundles, etc.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+STEP 3: FILES UPDATED
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ product.php
+  - Added: product view tracking
+  - Added: Similar Products section
+  - Added: Frequently Bought Together section
+  - Added: Upsell Products section
+
+✓ index.php
+  - Added: Popular Products section (by views & rating)
+  - Added: Personalized Recommendations (for logged-in users)
+
+✓ search.php
+  - Upgraded to: TF-IDF ranking for better search results
+  - Now shows relevance scores and product popularity
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ALGORITHM FUNCTIONS AVAILABLE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. RECOMMENDATION ENGINE
+   ─────────────────────
+   get_similar_products($conn, $product_id, $limit)
+   - Returns products in same category with similar price/rating
+   
+   get_frequently_bought_together($conn, $product_id, $limit)
+   - Returns products often bought with this product
+   
+   get_recommendations_collaborative_filtering($conn, $user_id, $limit)
+   - Returns personalized recommendations based on user behavior
+   
+   get_popular_products($conn, $limit)
+   - Returns most viewed and highest-rated products
+
+2. IMPROVED SEARCH
+   ──────────────────
+   search_with_tf_idf_ranking($conn, $search_str, $cat_id, $limit)
+   - Better search results using TF-IDF ranking
+   - Considers product name, description, and popularity
+
+3. ABC ANALYSIS
+   ──────────────────
+   get_abc_analysis($conn)
+   - Categorizes products into A, B, C classes by revenue
+   - A = High value, B = Medium, C = Low
+
+4. DEMAND FORECASTING
+   ──────────────────
+   forecast_demand($conn, $product_id, $months_back)
+   - Predicts future demand using moving average
+   - Suggests stock adjustments
+
+5. BUNDLE DETECTION
+   ──────────────────
+   detect_product_bundles($conn, $min_support)
+   - Finds products frequently bought together
+   - Useful for creating bundle offers
+
+6. UPSELLING & CROSS-SELLING
+   ──────────────────
+   get_upsell_products($conn, $product_id, $limit)
+   - Suggests higher-priced alternatives
+   
+   get_crosssell_products($conn, $product_id, $limit)
+   - Suggests complementary products from other categories
+
+7. PRODUCT VIEW TRACKING
+   ──────────────────
+   track_product_view($conn, $product_id)
+   - Increments view count for popularity metrics
+   - Automatically called in product.php
+
+8. ABANDONED CARTS
+   ──────────────────
+   get_abandoned_carts($conn)
+   - Finds carts not purchased in 24 hours
+   - Useful for email recovery campaigns
+
+9. CUSTOMER SEGMENTATION (RFM)
+   ──────────────────
+   get_customer_segments($conn)
+   - Segments customers: VIP, Active, At Risk, Inactive
+   - Based on Recency, Frequency, Monetary value
+
+10. PRICE OPTIMIZATION
+    ──────────────────
+    get_price_optimization($conn, $product_id)
+    - Suggests dynamic pricing based on competition
+    - Adjusts based on sales volume
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+USAGE EXAMPLES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+// In your PHP file:
+require('algorithms.inc.php');
+
+// Get similar products
+$similar = get_similar_products($conn, $product_id, 4);
+foreach($similar as $product) {
+    echo $product['name'] . " - ₹" . $product['price'];
+}
+
+// Get frequently bought together
+$bundles = get_frequently_bought_together($conn, $product_id, 3);
+
+// Get ABC analysis
+$abc_analysis = get_abc_analysis($conn);
+
+// Search with better ranking
+$results = search_with_tf_idf_ranking($conn, "laptop", "", 20);
+
+// Forecast demand
+$forecast = forecast_demand($conn, $product_id, 3);
+echo "Average demand: " . $forecast['average_monthly_demand'];
+
+// Get customer segments
+$segments = get_customer_segments($conn);
+
+// Access admin dashboard
+// Navigate to: /AdminTheme/analytics_dashboard.php
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+ADMIN DASHBOARD FEATURES
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Access: http://localhost/Project_iii/AdminTheme/analytics_dashboard.php
+
+Tabs Available:
+1. Overview
+   - Total products, views, orders, average rating
+
+2. ABC Analysis
+   - Classify products by revenue importance
+   - Decide which products to promote/discount
+
+3. Demand Forecast
+   - See trend for each product
+   - Get recommendations to increase/reduce stock
+
+4. Product Bundles
+   - See which products are bought together
+   - Create bundle offers
+
+5. Customer Segments
+   - VIP customers (high value, recent purchases)
+   - Active customers (regular purchases)
+   - At Risk (haven't purchased in 60 days)
+   - Inactive (no purchases in 180 days)
+
+6. Popular Products
+   - Most viewed and highest-rated products
+   - Scoring algorithm considers views, ratings, best seller
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+HOW ALGORITHMS IMPROVE YOUR BUSINESS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ Recommendation Engine
+  → Increases average order value by showing related products
+  → Reduces bounce rate with personalized suggestions
+
+✓ Improved Search
+  → Customers find products faster
+  → Better search results = higher conversion rates
+
+✓ ABC Analysis
+  → Focus marketing on high-value products (A class)
+  → Identify slow-moving items (C class) for discount strategies
+
+✓ Bundle Detection
+  → Create attractive product bundles
+  → Increase average transaction value
+
+✓ Customer Segmentation
+  → Target VIP customers with exclusive offers
+  → Send recovery emails to "At Risk" customers
+
+✓ Demand Forecasting
+  → Optimize inventory levels
+  → Prevent stockouts of popular items
+  → Avoid overstocking slow items
+
+✓ Price Optimization
+  → Adjust prices dynamically based on demand
+  → Stay competitive with market prices
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+FUTURE ENHANCEMENTS
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Consider adding:
+1. Email notifications for abandoned carts
+2. Automated discount suggestions for C-class products
+3. Customer lifetime value (CLV) calculation
+4. Seasonal trend analysis
+5. A/B testing framework for recommendations
+6. Machine learning models for better predictions
+7. Real-time recommendation updates
+8. Social proof (trending products, top reviews)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+TROUBLESHOOTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Q: No recommendations showing?
+A: Ensure setup_algorithms_db.php was run to create tables
+
+Q: Search not working better?
+A: Make sure you're using search_with_tf_idf_ranking() function
+
+Q: ABC Analysis shows no data?
+A: Need order history. Run some test orders first.
+
+Q: Dashboard shows error?
+A: Check that algorithms.inc.php is in root Project_iii folder
+
+Q: View count not updating?
+A: track_product_view() must be called in product.php
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+For questions or issues, refer to the code comments in:
+- algorithms.inc.php
+- product.php
+- search.php
+- index.php
+- AdminTheme/analytics_dashboard.php
+
+Happy optimizing! 🚀
